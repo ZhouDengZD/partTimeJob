@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="jobApp" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8"/>
+    <title>西柚易兼职</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="short icon" type="image/x-icon" href="img/logo.png"/>
+    <link rel="stylesheet" type="text/css" href="css/flexslider.css" />
+    <script src="//cdn.bootcss.com/angular.js/1.5.5/angular.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery.flexslider-min.js"></script>
+    <script  type="text/javascript">
+        var app=angular.module("jobApp",[]);
+        app.controller("jobCtrl",function ($scope, $http) {
+            $scope.index="";
+            $scope.location="";
+            $scope.kind="";
+            $scope.getJobs=function () {
+                $http({
+                    method:"get",
+                    url:"/showPtimeJobs",
+                    params:{
+                        index:$scope.index,
+                        location:$scope.location,
+                        kind:$scope.kind
+                    }
+                }).success(function (jobsPage) {
+                    $scope.jobs=jobsPage.content;
+                    $scope.latestPage(jobsPage);
+                })
+            };
+            $scope.getJobs();
+            $scope.changeIndex=function () {
+                $scope.index=document.getElementById("query").value;
+                $scope.location="";
+                $scope.kind="";
+                $scope.getJobs();
+            };
+            $scope.changeKind=function (element) {
+                $scope.kind=element;
+                $scope.location="";
+                $scope.index="";
+                $scope.getJobs();
+            };
+            $scope.changeLocation=function (element) {
+                $scope.location=element;
+                $scope.index="";
+                $scope.kind="";
+                $scope.getJobs();
+            };
+            $scope.latestPage=function (all) {
+                var demo2 = BootstrapPagination($("#demo2"), {
+                    layoutScheme: "lefttext,pagesizelist,firstpage,prevgrouppage,prevpage,pagenumber,nextpage,nextgrouppage,lastpage,pageinput,righttext",
+                    //记录总数。
+                    total: all.totalElements,
+                    //分页尺寸。指示每页最多显示的记录数量。
+                    pageSize: all.size,
+                    //当前页索引编号。从其开始（从0开始）的整数。
+                    pageIndex: all.number,
+                    //指示分页导航栏中最多显示的页索引数量。
+                    pageGroupSize: 5,
+                    //位于导航条左侧的输出信息格式化字符串
+                    leftFormateString: "本页{count}条记录/共{total}条记录",
+                    //位于导航条右侧的输出信息格式化字符串
+                    rightFormateString: "第{pageNumber}页/共{totalPages}页",
+                    //页码文本格式化字符串。
+                    pageNumberFormateString: "{pageNumber}",
+                    //分页尺寸输出格式化字符串
+                    pageSizeListFormateString: "每页显示{pageSize}条记录",
+                    //上一页导航按钮文本。
+                    prevPageText: "上一页",
+                    //下一页导航按钮文本。
+                    nextPageText: "下一页",
+                    //上一组分页导航按钮文本。
+                    prevGroupPageText: "上一组",
+                    //下一组分页导航按钮文本。
+                    nextGroupPageText: "下一组",
+                    //首页导航按钮文本。
+                    firstPageText: "首页",
+                    //尾页导航按钮文本。
+                    lastPageText: "尾页",
+                    //设置页码输入框中显示的提示文本。
+                    pageInputPlaceholder: "GO",
+                    //接受用户输入内容的延迟时间。单位：毫秒
+                    pageInputTimeout: 800,
+                    //分页尺寸列表。
+                    pageSizeList: [2, 5, 10, 20, 50, 100, 200],
+                    //当分页更改后引发此事件。
+                    pageChanged: function (pageIndex, pageSize) {
+                        $http({
+                            method:"get",
+                            url:"/showPtimeJobs",
+                            params:{
+                                page:pageIndex,
+                                size:pageSize,
+                                location:$scope.location,
+                                kind:$scope.kind,
+                                index:$scope.index
+                            }
+                        }).success(function (jobsPage) {
+                            $scope.jobs = jobsPage.content;
+                            $scope.latestPage(jobsPage);
+                        })
+                    }
+                });
+            }
+        });
+        $(function() {
+            $(".flexslider").flexslider({
+                slideshowSpeed: 3000, //展示时间间隔ms
+                animationSpeed: 400, //滚动时间ms
+                touch: true //是否支持触屏滑动
+            });
+        });
+        $(function(){
+            var header=$("#header");
+            $(window).scroll(function(){
+                if($(window).scrollTop()>=100){
+                    header.addClass("fixed-header");
+                    $(".fixed-header").fadeIn();
+                }
+                else{
+                    header.removeClass("fixed-header");
+                }
+            })
+        })
+
+    </script>
+    <link type="text/css" href="css/bootstrap.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8" src="js/bootstrap.min.js"></script>
+    <link type="text/css" href="css/bootstrap-pagination.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8" src="js/bootstrap-pagination.min.js"></script>
+    <link href="css/public.css" rel="stylesheet"/>
+    <link type="text/css" href="css/index.css" rel="stylesheet"/>
+</head>
+<body id="wrapper" ng-controller="jobCtrl">
+        <!-- S #header -->
+        <!--<p class="yiban">易班 非同一般</p>-->
+        <br/> <br/>
+        <header id="header">
+        	<div id="logo">
+        		<img src="img/logo.png" alt="logo"/>
+        		<img src="img/fun-part-time.png" alt="fun-part-time"/>
+        	</div>
+        	<div id="publish">
+                <ul>
+                    <li><a href="/getMyInfo" target="_self">我的兼职小屋</a></li>
+                    <li><a href="/goPushView" target="_self">发布兼职信息</a></li>
+                </ul>
+        	</div>
+        </header>
+        <!-- E #header -->
+        <section id="container">
+            <main id="main">
+                <div class="flexslider">
+                    <ul class="slides">
+                        <li><img src="img/努力.jpg" height="300px"/></li>
+                        <li><img src="img/f1.jpg" height="300px"/></li>
+                        <li><img src="img/s3.jpg" height="300px"/></li>
+                        <li><img src="img/s2.jpg" height="300px"/></li>
+
+                    </ul>
+                </div>
+                <div id="message-block">
+                    <div class="slogan">
+                        <img src="img/王冠.png " height="25px" width="25px"/>
+                        <span>易兼职 给你所求</span>
+                    </div>
+                    <div id="display">
+                        <ul>
+                            <li ng-repeat="job in jobs">
+                                <div class="left" >
+                                    <h3><a href="/getPtimeJobDetail/{{job.id}}" target="_blank">{{job.title}}</a></h3>
+                                    <div id="details">
+                                        <span id="publisher">{{job.groupName}} / </span>
+                                        <span id="text">{{job.text}} / </span>
+                                        <span id="extra">{{job.extra}} / </span>
+                                    </div>
+                                </div>
+                                <div id="money">{{job.reward}}</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <form class="form-inline" style="text-align: center" >
+                        <nav class="text-center">
+                            <ul id="demo2" class="pagination">
+
+                            </ul>
+                        </nav>
+                    </form>
+                </div>
+            </main>
+            <aside id="aside">
+                <div id="research">
+                    <input id="query" type="text" placeholder="搜学生兼职"/>
+                    <button type="button" ng-click="changeIndex()" >GO</button>
+                </div>
+                <div class="slogan">
+                    <img src="img/分类.png" height="25px" width="25px"/>
+                    <span>兼职种类</span>
+                </div>
+                <div id="category" class="shadow">
+                    <ul>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('传单派发')">传单派发</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('家教')">家教</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('导购')">导购</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('才艺老师')">才艺老师</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('服务员')">服务员</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('展会活动')">展会活动</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('翻译兼职')">翻译兼职</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('摄影兼职')">摄影兼职</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('打字员')">打字员</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeKind('淘宝客服')">淘宝客服</a></li>
+                        <!--<li><a href="#">其他兼职</a></li>-->
+                    </ul>
+                </div>
+                <div class="slogan">
+                    <img src="img/地点.png " height="25px" width="25px"/>
+                    <span>工作地点</span>
+                </div>
+                <div id="area" class="shadow">
+                    <ul>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('武侯')">武侯</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('金牛')">金牛</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('锦江')">锦江</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('青羊')">青羊</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('高新')">高新</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('成华')">成华</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('双流')">双流</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('郫县')">郫县</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('新都')">新都</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('温江')">温江</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('都江堰')">都江堰</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('崇州')">崇州</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('彭州')">彭州</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('新津')">新津</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('大邑')">大邑</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('青白江')">青白江</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('金堂')">金堂</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('浦江')">浦江</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('邛崃')">邛崃</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('高新西区')">高新西区</a></li>
+                        <li><a href="javascript:void (0)" ng-click="changeLocation('天府新区')">天府新区</a></li>
+                        <!--<li><a href="#">全成都</a></li>-->
+                    </ul>
+                </div>
+                <!--<div class="slogan">-->
+                    <!--<img src="img/推荐.png " height="25px" width="25px"/>-->
+                    <!--<span>你可能感兴趣</span>-->
+                <!--</div>-->
+                <!--<div id="recommend" class="shadow">-->
+                    <!--<ul>-->
+                        <!--<li><a href="#">书店兼职</a></li>-->
+                        <!--<li><a href="#">家教</a></li>-->
+                        <!--<li><a href="#">传单派发</a></li>-->
+                        <!--<li><a href="#">才艺老师</a></li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            </aside>
+        </section>
+        <!-- pages -->
+
+        <!-- S #footer -->
+        <footer id="footer">
+            <ul id="link">
+                <li>
+                    <img src="img/icon-swpu.jpg" style="width: 18px;height: 18px;border-radius:9px;vertical-align:text-top;margin: -1px 0.5em 0 0" />友情链接</li>
+                <li><a href="http://www.swpu.edu.cn">西南石油大学门户网站</a></li>
+                <li><a href="http://zsjy.swpu.edu.cn/">西南石油大学招就处</a></li>
+                <li><a href="http://jwc.swpu.edu.cn/">西南石油大学教务处</a></li>
+            </ul>
+            <br/>
+            <address>
+                <p>©CopyRight 2017-2027 FUN part-time Inc All Rights Reserved.</p>
+                <p><span>版权所有</span>西柚易兼职</p>
+            </address>
+        </footer>
+        <!-- E #footer -->
+</body>
+</html>

@@ -1,0 +1,13 @@
+com\partJob\model\JobMessage.class
+com\partJob\repository\InfoRecordRepository.class
+com\partJob\repository\PtimeInfoRepository.class
+com\partJob\model\Message.class
+com\partJob\App.class
+com\partJob\service\InfoRecordService.class
+com\partJob\controller\MvcConfig.class
+com\partJob\model\InfoRecord.class
+com\partJob\repository\StudentRepository.class
+com\partJob\controller\indexCtrl.class
+com\partJob\service\PtimeInfoService.class
+com\partJob\model\PtimeInfo.class
+com\partJob\model\Student.class
