@@ -181,7 +181,7 @@
      background-color: white;
      padding: 2em;
  }
- #container #main #setTab .works hr, #container #main #setTab .hr hr{
+ #container #main #setTab .works hr, #container #main .hr hr{
     width:100%;
 }
 #container #main #setTab .works .info{
